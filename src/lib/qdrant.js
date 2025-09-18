@@ -11,7 +11,7 @@ export function createClient() {
   })
 }
 
-export async function ensureCollection(client, vectorSize=384) {
+export async function ensureCollection(client, vectorSize=512) {
   const collections = await client.getCollections()
   const exists = collections.collections?.some(c => c.name === COLLECTION)
   if (!exists) {

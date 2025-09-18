@@ -1,13 +1,24 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { nanoid } from 'nanoid'
-import { createClient, search } from '../lib/qdrant.js'
+import { createClient, search, ensureCollection } from '../lib/qdrant.js'
 import { embedTexts } from '../lib/embeddings.js'
 import { pushMessage, getHistory, clearHistory } from '../lib/redis.js'
+
 import express from 'express'
 
 const router = express.Router()
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+const client = createClient();
+
+(async () => {
+  try {
+    await ensureCollection(client, 512); // use the same dimension as your embedding model
+    console.log("✅ Qdrant collection ensured:", process.env.COLLECTION_NAME || "news_chunks");
+  } catch (err) {
+    console.error("❌ Error ensuring collection:", err);
+  }
+})();
 
 router.post('/chat', async (req, res) => {
   try {

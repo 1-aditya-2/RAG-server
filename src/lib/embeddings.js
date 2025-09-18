@@ -2,7 +2,7 @@ import axios from 'axios'
 let pipeline = null
 
 const JINA_URL = 'https://api.jina.ai/v1/embeddings'
-const MODEL_LOCAL = 'Xenova/all-MiniLM-L6-v2' // 384-dim
+const MODEL_LOCAL = 'Xenova/all-MiniLM-L6-v2' // 512-dim
 
 export async function embedTexts(texts) {
   if (process.env.JINA_API_KEY) {

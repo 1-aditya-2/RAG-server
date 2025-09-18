@@ -25,7 +25,7 @@ async function extractArticle(url) {
 
 async function main() {
   const client = createClient()
-  await ensureCollection(client, 384)
+  await ensureCollection(client, 512)
   const urls = await fetchArticleURLs(60)
   console.log('Fetched URLs:', urls.length)
 
