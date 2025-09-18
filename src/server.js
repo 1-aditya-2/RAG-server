@@ -6,7 +6,12 @@ import { redis } from './lib/redis.js'
 import chatRouter from './routes/chat.js'
 
 const app = express()
-app.use(cors({ origin: '*'}))
+// Configure CORS to only allow requests from our frontend
+app.use(cors({ 
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://rag-server-1-gd8d.onrender.com', 'https://rag-client1.onrender.com/']
+    : 'http://localhost:5173'
+}))
 app.use(express.json({ limit: '1mb' }))
 
 // Health
