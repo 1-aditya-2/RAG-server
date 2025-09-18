@@ -7,18 +7,30 @@ export function createClient() {
   const apiKey = process.env.QDRANT_API_KEY || undefined
   return new QdrantClient({ 
     url,
-    apiKey 
+    apiKey,
+    checkCompatibility: false 
   })
 }
 
 export async function ensureCollection(client, vectorSize=512) {
   const collections = await client.getCollections()
   const exists = collections.collections?.some(c => c.name === COLLECTION)
-  if (!exists) {
+  
+  // If collection exists, verify vector size
+  if (exists) {
+    const info = await client.getCollection(COLLECTION)
+    const currentSize = info.config?.params?.vectors?.size
+    if (currentSize !== vectorSize) {
+      console.error(`Vector size mismatch! Collection has ${currentSize}-dim vectors but trying to use ${vectorSize}-dim vectors`)
+      throw new Error(`Vector dimension mismatch: collection=${currentSize}, requested=${vectorSize}`)
+    }
+  } else {
+    // Create new collection with specified vector size
     await client.createCollection(COLLECTION, {
       vectors: { size: vectorSize, distance: 'Cosine' },
       optimizers_config: { default_segment_number: 2 }
     })
+    console.log(`Created collection ${COLLECTION} with ${vectorSize}-dim vectors`)
   }
 }
 

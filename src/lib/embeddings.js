@@ -2,10 +2,19 @@ import axios from 'axios'
 let pipeline = null
 
 const JINA_URL = 'https://api.jina.ai/v1/embeddings'
-const MODEL_LOCAL = 'Xenova/all-MiniLM-L6-v2' // 512-dim
+const MODEL_LOCAL = 'Xenova/all-MiniLM-L12-v2' // 384-dim
+
+// Global cache for embedding choice
+let embeddingProvider = null;
 
 export async function embedTexts(texts) {
-  if (process.env.JINA_API_KEY) {
+  // One-time initialization of embedding provider choice
+  if (embeddingProvider === null) {
+    embeddingProvider = process.env.JINA_API_KEY ? 'jina' : 'local';
+    console.log(`Using ${embeddingProvider} embeddings provider`);
+  }
+
+  if (embeddingProvider === 'jina') {
     const { data } = await axios.post(JINA_URL, {
       input: texts,
       model: 'jina-embeddings-v3'
