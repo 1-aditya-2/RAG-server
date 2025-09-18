@@ -12,7 +12,7 @@ const client = createClient();
 (async () => {
   try {
     await ensureCollection(client, 1024); // Jina embeddings-v3 uses 1024-dim vectors
-    console.log("✅ Qdrant collection ensured:", process.env.COLLECTION_NAME || "news_chunks");
+    console.log("✅ Qdrant collection ensured:", process.env.COLLECTION_NAME || "news-rag");
   } catch (err) {
     console.error("❌ Error ensuring collection:", err);
   }

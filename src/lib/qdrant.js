@@ -1,15 +1,17 @@
 import { QdrantClient } from '@qdrant/js-client-rest'
 
-const COLLECTION = process.env.COLLECTION_NAME || 'news_chunks'
+const COLLECTION = process.env.COLLECTION_NAME || 'news-rag'
 
 export function createClient() {
   const url = process.env.QDRANT_URL || 'http://localhost:6333'
   const apiKey = process.env.QDRANT_API_KEY || undefined
-  return new QdrantClient({ 
+  console.log('Connecting to Qdrant at:', url)
+  const client = new QdrantClient({ 
     url,
     apiKey,
     checkCompatibility: false 
   })
+  return client
 }
 
 export async function ensureCollection(client, vectorSize=512) {
@@ -35,15 +37,21 @@ export async function ensureCollection(client, vectorSize=512) {
 }
 
 export async function upsertChunks(client, points) {
-  return client.upsert(process.env.COLLECTION_NAME || 'news_chunks', { points })
+  const collectionName = process.env.COLLECTION_NAME || 'news-rag';
+  console.log(`Upserting ${points.length} points to collection:`, collectionName);
+  return client.upsert(collectionName, { points })
 }
 
 export async function search(client, vector, topK=5) {
-  return client.search(process.env.COLLECTION_NAME || 'news_chunks', {
+  const collectionName = process.env.COLLECTION_NAME || 'news-rag';
+  console.log('Searching in collection:', collectionName);
+  const results = await client.search(collectionName, {
     vector,
     limit: topK,
     with_payload: true,
     with_vector: false,
     score_threshold: parseFloat(process.env.MIN_SCORE || '0.2')
-  })
+  });
+  console.log(`Found ${results.length} results with scores:`, results.map(r => r.score));
+  return results;
 }
