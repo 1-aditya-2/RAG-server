@@ -1,14 +1,12 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
 import { nanoid } from 'nanoid'
 import { createClient, search, ensureCollection } from '../lib/qdrant.js'
 import { embedTexts } from '../lib/embeddings.js'
 import { pushMessage, getHistory, clearHistory } from '../lib/redis.js'
+import { generateResponse } from '../lib/llm.js'
 
 import express from 'express'
 
 const router = express.Router()
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 const client = createClient();
 
 (async () => {
@@ -50,7 +48,7 @@ ${contexts.map((c,i)=>`[${i+1}] ${c.title} — ${c.url}\n${c.text.slice(0,1200)}
 
 Answer:`
 
-    const resp = await model.generateContent(prompt)
+    const resp = await generateResponse(prompt)
     const text = resp.response.text()
 
     await pushMessage(sessionId, 'assistant', text)
@@ -93,14 +91,12 @@ ${contexts.map((c,i)=>`[${i+1}] ${c.title} — ${c.url}\n${c.text.slice(0,1200)}
 
 Answer:`
 
-    const model = new (await import('@google/generative-ai')).GoogleGenerativeAI(process.env.GEMINI_API_KEY).getGenerativeModel({ model: 'gemini-1.5-flash' })
-
     res.setHeader('Content-Type', 'text/event-stream')
     res.setHeader('Cache-Control', 'no-cache')
     res.setHeader('Connection', 'keep-alive')
     res.flushHeaders()
 
-    const stream = await model.generateContentStream(prompt)
+    const stream = await generateResponse(prompt, { stream: true })
 
     let full = ''
     for await (const chunk of stream.stream) {
