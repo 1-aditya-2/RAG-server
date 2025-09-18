@@ -4,9 +4,10 @@ const COLLECTION = process.env.COLLECTION_NAME || 'news_chunks'
 
 export function createClient() {
   const url = process.env.QDRANT_URL || 'http://localhost:6333'
+  const apiKey = process.env.QDRANT_API_KEY || undefined
   return new QdrantClient({ 
     url,
-    checkCompatibility: false 
+    apiKey 
   })
 }
 
