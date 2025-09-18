@@ -25,7 +25,7 @@ async function extractArticle(url) {
 
 async function main() {
   const client = createClient()
-  await ensureCollection(client, 512)
+  await ensureCollection(client, 1024) // Jina embeddings-v3 uses 1024-dim vectors
   const urls = await fetchArticleURLs(60)
   console.log('Fetched URLs:', urls.length)
 
