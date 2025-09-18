@@ -16,9 +16,8 @@ This is the **backend** of the RAG Chatbot project, built with **Node.js + Expre
 - **Node.js**
 - **Express.js**
 - **Qdrant** (Vector Database)
-- **OpenAI API** (for embeddings + responses)
+- **Gemini API** (for embeddings + responses)
 - **Dotenv** (environment config)
-- **Cors**
 
 ---
 
@@ -38,7 +37,7 @@ This is the **backend** of the RAG Chatbot project, built with **Node.js + Expre
 3. Create `.env` file in the backend directory:
    ```env
    PORT=5000
-   OPENAI_API_KEY=your_openai_api_key
+   GEMINI_API_KEY=your_openai_api_key
    QDRANT_URL=http://localhost:6333
    QDRANT_API_KEY=your_qdrant_api_key
    COLLECTION_NAME=chatbot_docs
@@ -73,18 +72,6 @@ backend/
 - **POST** `/api/chat` → Send user query and get AI response
 - **GET** `/api/history/:sessionId` → Get past conversation
 - **POST** `/api/reset` → Reset user session
-
----
-
-## 🛠 Qdrant Setup
-- Install and run Qdrant (Docker recommended):
-  ```bash
-  docker run -p 6333:6333 qdrant/qdrant
-  ```
-- Create a collection:
-  ```bash
-  POST http://localhost:6333/collections/chatbot_docs
-  ```
 
 ---
 
