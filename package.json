@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "dev": "node src/server.js",
-    "start": "node src/server.js",
     "ingest": "node src/ingest.js",
     "start": "node src/server.js",
   },
