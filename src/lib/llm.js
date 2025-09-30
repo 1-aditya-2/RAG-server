@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const FALLBACK_MODEL = 'gemini-1.0-pro';
+const FALLBACK_MODEL = 'gemini-1.5-pro';
 const MAX_RETRIES = 3;
 const BASE_DELAY = 1000; // 1 second
 
